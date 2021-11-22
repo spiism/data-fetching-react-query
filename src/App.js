@@ -1,23 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 function App() {
+  const [isLoading, setLoading] = useState(false);
+  const [isError, setError] = useState(false);
+  const [data, setData] = useState({});
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setError(false);
+      setLoading(true);
+      try {
+        const response = await axios("https://random.dog/woof.json");
+        setData(response.data);
+      } catch (error) {
+        setError(true);
+      }
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
+
+  if (isError) return <h1> Error, try again!</h1>;
+  if (isLoading) return <h1> Loading...</h1>;
+  console.log(data);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <img src={data.url} />
     </div>
   );
 }
